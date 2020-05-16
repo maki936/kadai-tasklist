@@ -10,11 +10,26 @@ class UsersController extends Controller
 {
     public function index()
     {
-        $users = User::orderBy('id', 'desc')->paginate(10);
+        $data = [];
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+            
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+            //return view('users.index', [
+            //'users' => $users,
+        //]);
+        }
+        
+        return view('welcome', $data);
+        
+        
+        //$users = User::orderBy('id', 'desc')->paginate(10);
 
-        return view('users.index', [
-            'users' => $users,
-        ]);
+        
     }
     
     public function show($id)
@@ -26,12 +41,4 @@ class UsersController extends Controller
         ]);
     }
     
-    public function show($id)
-    {
-        $user = User::find($id);
-
-        return view('users.show', [
-            'user' => $user,
-        ]);
-    }
 }
