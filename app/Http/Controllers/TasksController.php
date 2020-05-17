@@ -89,11 +89,17 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        $task = Task::find($id);
+        $task = \App\Task::find($id);
 
-        return view('tasks.show', [
+        if (\Auth::id() === $task->user_id) {
+            $task = Task::find($id);
+        
+            return view('tasks.show', [
             'task' => $task,
-        ]);
+            ]);
+        }else { 
+            return redirect('/');
+        }
     }
 
     /**
@@ -104,11 +110,17 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
-        $task = Task::find($id);
+        $task = \App\Task::find($id);
 
-        return view('tasks.edit', [
+        if (\Auth::id() === $task->user_id) {
+            $task = Task::find($id);
+        
+            return view('tasks.show', [
             'task' => $task,
-        ]);
+            ]);
+        }else { 
+            return redirect('/');
+        }
     }
 
     /**
@@ -125,13 +137,23 @@ class TasksController extends Controller
             'content' => 'required|max:191',
         ]);
         
-        $task = Task::find($id);
-        $task->status = $request->status;    // 追加
-        $task->content = $request->content;
-        $task->save();
+        $task = \App\Task::find($id);
 
-        return redirect('/');
+        if (\Auth::id() === $task->user_id) {
+            $task = Task::find($id);
+        
+            return view('tasks.show', [
+            'task' => $task,
+            ]);
+        }else { 
+            return redirect('/');
+        }
     }
+       
+        //$task = Task::find($id);
+        //$task->status = $request->status;    // 追加
+        //$task->content = $request->content;
+        //$task->save();
 
     /**
      * Remove the specified resource from storage.
@@ -142,9 +164,16 @@ class TasksController extends Controller
      
     public function destroy($id)
     {
-        $task = Task::find($id);
-        $task->delete();
+        $task = \App\Task::find($id);
 
-        return redirect('/');
+        if (\Auth::id() === $task->user_id) {
+            $task = Task::find($id);
+        
+            return view('tasks.show', [
+            'task' => $task,
+            ]);
+        }else { 
+            return redirect('/');
+        }
     }
 }
