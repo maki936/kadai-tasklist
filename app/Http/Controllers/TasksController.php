@@ -133,28 +133,23 @@ class TasksController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'status' => 'required|max:10',   // 追加
+            'status' => 'required|max:10',   
             'content' => 'required|max:191',
         ]);
         
-        $task = \App\Task::find($id);
-
-        if (\Auth::id() === $task->user_id) {
-            $task = Task::find($id);
+        $task = Task::find($id);//$task = \App\Task::find($id);と同じ内容
         
-            return view('tasks.show', [
-            'task' => $task,
-            ]);
+        if (\Auth::id() === $task->user_id) {
+            $task->status = $request->status;    
+            $task->content = $request->content;
+            $task->save();
+            
         }else { 
             return redirect('/');
         }
     }
        
-        //$task = Task::find($id);
-        //$task->status = $request->status;    // 追加
-        //$task->content = $request->content;
-        //$task->save();
-
+      
     /**
      * Remove the specified resource from storage.
      *
